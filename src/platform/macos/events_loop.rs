@@ -486,9 +486,18 @@ impl EventsLoop {
                 appkit::NSEventSubtype::NSApplicationActivatedEventType => {
                     Some(Event::Awakened)
                 },
+                appkit::NSEventSubtype::NSApplicationReOpenedEventType => {
+                    let windows = self.shared.windows.lock().unwrap();
+                    let has_visible_windows = windows.iter()
+                        .filter_map(Weak::upgrade)
+                        .any(|window| {
+                            let is_visible: cocoa::base::BOOL = msg_send![*window.window, isVisible];
+                            is_visible == cocoa::base::YES
+                        });
+                    Some(Event::Reopen { has_visible_windows })
+                },
                 _ => None,
             },
-
             _  => None,
         }
     }

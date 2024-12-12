@@ -19,6 +19,14 @@ pub enum Event {
     ///
     /// The parameter is true if app was suspended, and false if it has been resumed.
     Suspended(bool),
+
+    /// The application has been requested to be reopened.
+    ///
+    /// This is triggered when the dock icon is clicked on macOS.
+    /// The parameter indicates whether there are visible windows.
+    Reopen {
+        has_visible_windows: bool,
+    },
 }
 
 /// Describes an event from a `Window`.
